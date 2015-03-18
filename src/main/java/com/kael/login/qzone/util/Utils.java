@@ -10,14 +10,19 @@ import java.util.regex.Pattern;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
-
+import com.kael.login.qzone.model.QzoneUser;
 public class Utils {
 	private Utils() {
 
@@ -39,97 +44,97 @@ public class Utils {
         return binl2str(core_md5(str2binl(A), A.length() * chrsz));
     }
     
-    public static int[] core_md5(int[] K, int F) {
-        int[] X = new int[(((F + 64) >>> 9) << 4) + 14 + 2];
-        for (int i = 0; i < K.length; i++) {
-            X[i] = K[i];
+    public static int[] core_md5(int[] x, int len) {
+        int[] X = new int[(((len + 64) >>> 9) << 4) + 14 + 2];
+        for (int i = 0; i < x.length; i++) {
+            X[i] = x[i];
         }
         
-        X[F >> 5] |= 128 << ((F) % 32);
-        X[(((F + 64) >>> 9) << 4) + 14] = F;
-        int J = 1732584193;
-        int I = -271733879;
-        int H = -1732584194;
-        int G = 271733878;
+        X[len >> 5] |= 128 << ((len) % 32);
+        X[(((len + 64) >>> 9) << 4) + 14] = len;
+        int a = 1732584193;
+        int b = -271733879;
+        int c = -1732584194;
+        int d = 271733878;
         for (int C = 0; C < X.length; C += 16) {
-            int E = J;
-            int D = I;
-            int B = H;
-            int A = G;
-            J = md5_ff(J, I, H, G, X[C + 0], 7, -680876936);
-            G = md5_ff(G, J, I, H, X[C + 1], 12, -389564586);
-            H = md5_ff(H, G, J, I, X[C + 2], 17, 606105819);
-            I = md5_ff(I, H, G, J, X[C + 3], 22, -1044525330);
-            J = md5_ff(J, I, H, G, X[C + 4], 7, -176418897);
-            G = md5_ff(G, J, I, H, X[C + 5], 12, 1200080426);
-            H = md5_ff(H, G, J, I, X[C + 6], 17, -1473231341);
-            I = md5_ff(I, H, G, J, X[C + 7], 22, -45705983);
-            J = md5_ff(J, I, H, G, X[C + 8], 7, 1770035416);
-            G = md5_ff(G, J, I, H, X[C + 9], 12, -1958414417);
-            H = md5_ff(H, G, J, I, X[C + 10], 17, -42063);
-            I = md5_ff(I, H, G, J, X[C + 11], 22, -1990404162);
-            J = md5_ff(J, I, H, G, X[C + 12], 7, 1804603682);
-            G = md5_ff(G, J, I, H, X[C + 13], 12, -40341101);
-            H = md5_ff(H, G, J, I, X[C + 14], 17, -1502002290);
-            I = md5_ff(I, H, G, J, X[C + 15], 22, 1236535329);
-            J = md5_gg(J, I, H, G, X[C + 1], 5, -165796510);
-            G = md5_gg(G, J, I, H, X[C + 6], 9, -1069501632);
-            H = md5_gg(H, G, J, I, X[C + 11], 14, 643717713);
-            I = md5_gg(I, H, G, J, X[C + 0], 20, -373897302);
-            J = md5_gg(J, I, H, G, X[C + 5], 5, -701558691);
-            G = md5_gg(G, J, I, H, X[C + 10], 9, 38016083);
-            H = md5_gg(H, G, J, I, X[C + 15], 14, -660478335);
-            I = md5_gg(I, H, G, J, X[C + 4], 20, -405537848);
-            J = md5_gg(J, I, H, G, X[C + 9], 5, 568446438);
-            G = md5_gg(G, J, I, H, X[C + 14], 9, -1019803690);
-            H = md5_gg(H, G, J, I, X[C + 3], 14, -187363961);
-            I = md5_gg(I, H, G, J, X[C + 8], 20, 1163531501);
-            J = md5_gg(J, I, H, G, X[C + 13], 5, -1444681467);
-            G = md5_gg(G, J, I, H, X[C + 2], 9, -51403784);
-            H = md5_gg(H, G, J, I, X[C + 7], 14, 1735328473);
-            I = md5_gg(I, H, G, J, X[C + 12], 20, -1926607734);
-            J = md5_hh(J, I, H, G, X[C + 5], 4, -378558);
-            G = md5_hh(G, J, I, H, X[C + 8], 11, -2022574463);
-            H = md5_hh(H, G, J, I, X[C + 11], 16, 1839030562);
-            I = md5_hh(I, H, G, J, X[C + 14], 23, -35309556);
-            J = md5_hh(J, I, H, G, X[C + 1], 4, -1530992060);
-            G = md5_hh(G, J, I, H, X[C + 4], 11, 1272893353);
-            H = md5_hh(H, G, J, I, X[C + 7], 16, -155497632);
-            I = md5_hh(I, H, G, J, X[C + 10], 23, -1094730640);
-            J = md5_hh(J, I, H, G, X[C + 13], 4, 681279174);
-            G = md5_hh(G, J, I, H, X[C + 0], 11, -358537222);
-            H = md5_hh(H, G, J, I, X[C + 3], 16, -722521979);
-            I = md5_hh(I, H, G, J, X[C + 6], 23, 76029189);
-            J = md5_hh(J, I, H, G, X[C + 9], 4, -640364487);
-            G = md5_hh(G, J, I, H, X[C + 12], 11, -421815835);
-            H = md5_hh(H, G, J, I, X[C + 15], 16, 530742520);
-            I = md5_hh(I, H, G, J, X[C + 2], 23, -995338651);
-            J = md5_ii(J, I, H, G, X[C + 0], 6, -198630844);
-            G = md5_ii(G, J, I, H, X[C + 7], 10, 1126891415);
-            H = md5_ii(H, G, J, I, X[C + 14], 15, -1416354905);
-            I = md5_ii(I, H, G, J, X[C + 5], 21, -57434055);
-            J = md5_ii(J, I, H, G, X[C + 12], 6, 1700485571);
-            G = md5_ii(G, J, I, H, X[C + 3], 10, -1894986606);
-            H = md5_ii(H, G, J, I, X[C + 10], 15, -1051523);
-            I = md5_ii(I, H, G, J, X[C + 1], 21, -2054922799);
-            J = md5_ii(J, I, H, G, X[C + 8], 6, 1873313359);
-            G = md5_ii(G, J, I, H, X[C + 15], 10, -30611744);
-            H = md5_ii(H, G, J, I, X[C + 6], 15, -1560198380);
-            I = md5_ii(I, H, G, J, X[C + 13], 21, 1309151649);
-            J = md5_ii(J, I, H, G, X[C + 4], 6, -145523070);
-            G = md5_ii(G, J, I, H, X[C + 11], 10, -1120210379);
-            H = md5_ii(H, G, J, I, X[C + 2], 15, 718787259);
-            I = md5_ii(I, H, G, J, X[C + 9], 21, -343485551);
-            J = safe_add(J, E);
-            I = safe_add(I, D);
-            H = safe_add(H, B);
-            G = safe_add(G, A);
+            int olda = a;
+            int oldb = b;
+            int oldc = c;
+            int oldd = d;
+            a = md5_ff(a, b, c, d, X[C + 0], 7, -680876936);
+            d = md5_ff(d, a, b, c, X[C + 1], 12, -389564586);
+            c = md5_ff(c, d, a, b, X[C + 2], 17, 606105819);
+            b = md5_ff(b, c, d, a, X[C + 3], 22, -1044525330);
+            a = md5_ff(a, b, c, d, X[C + 4], 7, -176418897);
+            d = md5_ff(d, a, b, c, X[C + 5], 12, 1200080426);
+            c = md5_ff(c, d, a, b, X[C + 6], 17, -1473231341);
+            b = md5_ff(b, c, d, a, X[C + 7], 22, -45705983);
+            a = md5_ff(a, b, c, d, X[C + 8], 7, 1770035416);
+            d = md5_ff(d, a, b, c, X[C + 9], 12, -1958414417);
+            c = md5_ff(c, d, a, b, X[C + 10], 17, -42063);
+            b = md5_ff(b, c, d, a, X[C + 11], 22, -1990404162);
+            a = md5_ff(a, b, c, d, X[C + 12], 7, 1804603682);
+            d = md5_ff(d, a, b, c, X[C + 13], 12, -40341101);
+            c = md5_ff(c, d, a, b, X[C + 14], 17, -1502002290);
+            b = md5_ff(b, c, d, a, X[C + 15], 22, 1236535329);
+            a = md5_gg(a, b, c, d, X[C + 1], 5, -165796510);
+            d = md5_gg(d, a, b, c, X[C + 6], 9, -1069501632);
+            c = md5_gg(c, d, a, b, X[C + 11], 14, 643717713);
+            b = md5_gg(b, c, d, a, X[C + 0], 20, -373897302);
+            a = md5_gg(a, b, c, d, X[C + 5], 5, -701558691);
+            d = md5_gg(d, a, b, c, X[C + 10], 9, 38016083);
+            c = md5_gg(c, d, a, b, X[C + 15], 14, -660478335);
+            b = md5_gg(b, c, d, a, X[C + 4], 20, -405537848);
+            a = md5_gg(a, b, c, d, X[C + 9], 5, 568446438);
+            d = md5_gg(d, a, b, c, X[C + 14], 9, -1019803690);
+            c = md5_gg(c, d, a, b, X[C + 3], 14, -187363961);
+            b = md5_gg(b, c, d, a, X[C + 8], 20, 1163531501);
+            a = md5_gg(a, b, c, d, X[C + 13], 5, -1444681467);
+            d = md5_gg(d, a, b, c, X[C + 2], 9, -51403784);
+            c = md5_gg(c, d, a, b, X[C + 7], 14, 1735328473);
+            b = md5_gg(b, c, d, a, X[C + 12], 20, -1926607734);
+            a = md5_hh(a, b, c, d, X[C + 5], 4, -378558);
+            d = md5_hh(d, a, b, c, X[C + 8], 11, -2022574463);
+            c = md5_hh(c, d, a, b, X[C + 11], 16, 1839030562);
+            b = md5_hh(b, c, d, a, X[C + 14], 23, -35309556);
+            a = md5_hh(a, b, c, d, X[C + 1], 4, -1530992060);
+            d = md5_hh(d, a, b, c, X[C + 4], 11, 1272893353);
+            c = md5_hh(c, d, a, b, X[C + 7], 16, -155497632);
+            b = md5_hh(b, c, d, a, X[C + 10], 23, -1094730640);
+            a = md5_hh(a, b, c, d, X[C + 13], 4, 681279174);
+            d = md5_hh(d, a, b, c, X[C + 0], 11, -358537222);
+            c = md5_hh(c, d, a, b, X[C + 3], 16, -722521979);
+            b = md5_hh(b, c, d, a, X[C + 6], 23, 76029189);
+            a = md5_hh(a, b, c, d, X[C + 9], 4, -640364487);
+            d = md5_hh(d, a, b, c, X[C + 12], 11, -421815835);
+            c = md5_hh(c, d, a, b, X[C + 15], 16, 530742520);
+            b = md5_hh(b, c, d, a, X[C + 2], 23, -995338651);
+            a = md5_ii(a, b, c, d, X[C + 0], 6, -198630844);
+            d = md5_ii(d, a, b, c, X[C + 7], 10, 1126891415);
+            c = md5_ii(c, d, a, b, X[C + 14], 15, -1416354905);
+            b = md5_ii(b, c, d, a, X[C + 5], 21, -57434055);
+            a = md5_ii(a, b, c, d, X[C + 12], 6, 1700485571);
+            d = md5_ii(d, a, b, c, X[C + 3], 10, -1894986606);
+            c = md5_ii(c, d, a, b, X[C + 10], 15, -1051523);
+            b = md5_ii(b, c, d, a, X[C + 1], 21, -2054922799);
+            a = md5_ii(a, b, c, d, X[C + 8], 6, 1873313359);
+            d = md5_ii(d, a, b, c, X[C + 15], 10, -30611744);
+            c = md5_ii(c, d, a, b, X[C + 6], 15, -1560198380);
+            b = md5_ii(b, c, d, a, X[C + 13], 21, 1309151649);
+            a = md5_ii(a, b, c, d, X[C + 4], 6, -145523070);
+            d = md5_ii(d, a, b, c, X[C + 11], 10, -1120210379);
+            c = md5_ii(c, d, a, b, X[C + 2], 15, 718787259);
+            b = md5_ii(b, c, d, a, X[C + 9], 21, -343485551);
+            a = safe_add(a, olda);
+            b = safe_add(b, oldb);
+            c = safe_add(c, oldc);
+            d = safe_add(d, oldd);
         }
         if (mode == 16) {
-            int[] r = { I, H };
+            int[] r = { b, c };
             return r;
         } else {
-            int[] r = { J, I, H, G };
+            int[] r = { a, b, c, d };
             return r;
         }       
     }
@@ -154,10 +159,10 @@ public class Utils {
         return md5_cmn(G ^ (B | (~F)), C, B, A, E, D);
     }
 
-    public static int safe_add(int A, int D) {
-        int C = (A & 65535) + (D & 65535);
-        int B = (A >> 16) + (D >> 16) + (C >> 16);
-        return (B << 16) | (C & 65535);
+    public static int safe_add(int x, int y) {
+        int lsw = (x & 65535) + (y & 65535);
+        int nsw = (x >> 16) + (y >> 16) + (lsw >> 16);
+        return (nsw << 16) | (lsw & 65535);
     }
 
     public static int bit_rol(int A, int B) {
@@ -220,26 +225,26 @@ public class Utils {
         return hex;
     }
     
-    public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-        String H = hexchar2bin(md5("201314.."));
-        String F = md5(H + hexchar2bin("\\x00\\x00\\x00\\x00\\x03\\x7b\\xab\\x09".replace("\\x", "").toUpperCase()));
-        String C = md5(F + "!PZM");
-        System.out.println(C);
-    }
-    
+//    public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+//        String H = hexchar2bin(md5("201314.."));
+//        String F = md5(H + hexchar2bin("\\x00\\x00\\x00\\x00\\x03\\x7b\\xab\\x09".replace("\\x", "").toUpperCase()));
+//        String C = md5(F + "!PZM");
+//        System.out.println(C);
+//    }
+//    
     
     public static String charset = "UTF-8";
     public static String FUNCTION_PATTERN = "\\'(.+)\\'";
 
-    public static String getCharset() {
-        return charset;
-    }
+//    public static String getCharset() {
+//        return charset;
+//    }
     
-    public static String getPwd(String uin, String pwd, String verifyCode) throws Exception {
+    public static String getPwd(String salt, String pwd, String verifyCode) throws Exception {
         String C = "";
         try {
-            String H = hexchar2bin(md5(pwd));
-            String F = md5(H + hexchar2bin(uin.replace("\\x", "").toUpperCase()));
+            String h1 = hexchar2bin(md5(pwd));
+            String F = md5(h1 + hexchar2bin(salt.replace("\\x", "").toUpperCase()));
             C = md5(F + verifyCode.toUpperCase());
         } catch (Exception e) {
             throw new Exception("getPwd error:", e);
@@ -255,9 +260,9 @@ public class Utils {
         return hash & 0x7fffffff;
     }
     
+    private static char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
     public static String byteToHex(byte b) {
         // Returns hex String representation of byte b
-        char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
         char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
         return new String(array);
     }
@@ -328,22 +333,104 @@ public class Utils {
         }
     }
     
+    public static String getEncryption(String password, String salt,String vcode){
+    	        
+    	String h1="";
+		try {
+			h1 = hexchar2bin(md5(password));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	String s2 = md5(h1+salt);
+    	String rsaH1 = RsaUtil.rsa_encrypt(h1);
+    	
+    	String rsaH1Len =Integer.toString(rsaH1.length() / 2, 16) ;
+    	String hexVcode = strToBytes(vcode.toUpperCase());
+    	return "";
+    }
+    
+    private static String strToBytes(String str){
+    	
+		String s = "";
+		for (char c : str.toCharArray()) {
+			s += charToHex(c);
+		}
+		return s;
+    }
+    
+    public static void main(String[] args) {
+		System.out.println(strToBytes("ab34"));
+	}
+    
+    
     private static CloseableHttpClient httpclient = HttpClients.createDefault();
       
+    private static CookieStore cookieStore = new BasicCookieStore();
+    
+    static{
+    	cookieStore.addCookie(new BasicClientCookie("_qz_referrer", "qzone.qq.com"));
+    }
+    
+    public static String uikey ="uikey";
+    public static String pt_user_id ="pt_user_id";
+    public static String pt_local_token ="pt_local_token";
+    public static String ptui_identifier ="ptui_identifier";
+    public static String confirmuin ="confirmuin";
+    public static String ptvfsession ="ptvfsession";
+    public static String ptisp ="ptisp";
+    public static String pgv_info ="pgv_info";
+    public static String pgv_pvid ="pgv_pvid";
+    public static String qrsig ="qrsig";
+    
     public static byte[] requestGet(String uri) {
+    	return requestGet(uri, cookieStore, true);
+    }
+    
+    public static byte[] requestGet(String uri,QzoneUser qzoneUser){
+    	return requestGet(uri, qzoneUser.getCookieStore(), true);
+    }
+
+    public static byte[] requestGet(String uri,CookieStore localCookieStore, boolean isNeedTakeCookie){
     	HttpGet httpGet = new HttpGet(uri);
+    	httpGet.setHeader("User_Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:36.0) Gecko/20100101 Firefox/36.0");
+    	httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    	httpGet.setHeader("Accept-lang", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");
+    	httpGet.setHeader("Accept-encoding", "gzip, deflate");
     	try {
-			HttpResponse httpResponse = httpclient.execute(httpGet);
-			int status = httpResponse.getStatusLine().getStatusCode();
-			if (status >= 200 && status < 300) {
-			    HttpEntity entity = httpResponse.getEntity();
-			    return entity == null ? null : EntityUtils.toByteArray(entity);
-			} else {
-			    throw new ClientProtocolException("Unexpected response status: " + status);
-			}
+    		HttpContext httpContext = null;
+    		if(isNeedTakeCookie){
+    			httpContext = new BasicHttpContext();
+    			httpContext.setAttribute(HttpClientContext.COOKIE_STORE, localCookieStore);
+    		}
+			byte[] ret = httpclient.execute(httpGet,new ResponseHandler<byte[]>() {
+
+				@Override
+				public byte[] handleResponse(HttpResponse response)
+						throws ClientProtocolException, IOException {
+					int status = response.getStatusLine().getStatusCode();
+					if (status >= 200 && status < 300) {
+					    HttpEntity entity = response.getEntity();
+					    return entity == null ? null : EntityUtils.toByteArray(entity);
+					} else {
+					    throw new ClientProtocolException("Unexpected response status: " + status);
+					}
+				}
+				
+			},httpContext);
+			
+//			for(Cookie ck : localCookieStore.getCookies()){
+//				System.out.println(ck);
+//			}
+			return ret;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
     }
+
+	public static CookieStore getCookieStore() {
+		return cookieStore;
+	}
+    
 }

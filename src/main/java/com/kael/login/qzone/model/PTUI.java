@@ -35,6 +35,7 @@ public class PTUI {
     private String authid;
     private String auth_mode;
     private String pt_qzone_sig;
+    private String pt_vcode_v1;
     
     public String getS_url() {
         return s_url;
@@ -240,6 +241,11 @@ public class PTUI {
     public void setPt_qzone_sig(String pt_qzone_sig) {
         this.pt_qzone_sig = pt_qzone_sig;
     }
-    
+	public String getPt_vcode_v1() {
+		return pt_vcode_v1;
+	}
+	public void setPt_vcode_v1(String pt_vcode_v1) {
+		this.pt_vcode_v1 = pt_vcode_v1;
+	}
     
 }

@@ -44,8 +44,8 @@ public class RSA {
 	private static au ah(String aD, int aG){
 		return new au(aD, aG);
 	}
-	private static m aq(){
-		return new m();
+	private static _m aq(){
+		return new _m();
 	}
 	
 	private static int l(long z) {
@@ -614,7 +614,7 @@ public class RSA {
     
     static class af{
     	static final int O = 256;
-    	m o;
+    	_m o;
     	long[] W;
     	int ae;
     	public af(){
@@ -674,11 +674,11 @@ public class RSA {
     	}
     }
     
-    static class m{
+    static class _m{
     	private int i;
 		private int j;
 		private int[] S;
-		public m() {
+		public _m() {
     		this.i = 0;
     		this.j = 0;
     		this.S = new int[256];

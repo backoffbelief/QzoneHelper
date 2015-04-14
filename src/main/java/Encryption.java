@@ -1,6 +1,6 @@
 
 
-public class Qzone {
+public class Encryption {
 
 	public static String getPwd0(String uin, String pwd, String verifyCode)
 			throws Exception {

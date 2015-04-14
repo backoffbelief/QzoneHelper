@@ -229,7 +229,7 @@ public class Main extends JFrame {
                         // 第三步登陆空间
                         String uri = "http://ptlogin2.qq.com/login?u=" + jTextField_UID.getText() + 
                         		"&p=" + Utils.getPwd(uin == null ? Utils.uin2hex(jTextField_UID.getText()) : uin, new String(jTextField_PWD.getPassword()).trim(), verifyCode) +
-                        		"&verifycode=" + verifyCode + "&aid=549000912&u1=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&h=1&ptredirect=0&ptlang=2052&daid=5&from_ui=1&dumy=&low_login_enable=0&regmaster=&fp=loginerroralert&action=2-21-1385452444158&mibao_css=&t=1&g=1&js_ver="+qzone_js_ver+"&js_type=1&login_sig=" + ptui.getLogin_sig() + "&pt_rsa=0&pt_qzone_sig=1";
+                        		"&verifycode=" + verifyCode + "&pt_verifysession_v1="+Utils.getPt_verifysession_v1()+"&aid=549000912&u1=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&h=1&ptredirect=0&ptlang=2052&daid=5&from_ui=1&dumy=&low_login_enable=0&regmaster=&fp=loginerroralert&action=2-21-1385452444158&mibao_css=&t=1&g=1&js_ver="+qzone_js_ver+"&js_type=1&login_sig=" + ptui.getLogin_sig() + "&pt_rsa=0&pt_qzone_sig=1";
                         
                         //appendJTextArea("Http Request：" + httpGet.getURI());
                         responseBody = new String(Utils.requestGet(uri));

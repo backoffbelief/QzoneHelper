@@ -9,6 +9,8 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
 
+import com.kael.login.qzone.util.Utils;
+
 public class QzoneUser {
 
 	private String qq;
@@ -79,5 +81,19 @@ public class QzoneUser {
 			}
 		}
 		return ptvfsession;
+	}
+	
+	public String toUrl(PTUI ptui,String vcode,String uin) throws Exception{
+		StringBuilder builder = new StringBuilder();
+		builder.append("http://ptlogin2.qq.com/login?u=").append(qq)
+		       .append("&p=").append(Utils.getPwd(uin == null ? Utils.uin2hex(qq) : uin, passwd.trim(), vcode))
+		       .append("&verifycode=").append(vcode)
+		       .append("&low_login=0")
+		       .append("&pt_verifysession_v1=").append(getPtvfsession())
+               .append("&js_ver=").append(ptui.getPtui_version())
+		       .append("&aid=549000912&u1=http%3A%2F%2Fqzs.qq.com%2Fqzone%2Fv5%2Floginsucc.html%3Fpara%3Dizone&h=1&ptredirect=0&ptlang=2052&daid=5&from_ui=1&dumy=&low_login_enable=0&regmaster=&fp=loginerroralert&action=2-21-1385452444158&mibao_css=&t=1&g=1&js_ver=")
+		       .append(ptui).append("&js_type=1&login_sig=").append(ptui.getLogin_sig())
+		       .append("&pt_rsa=0&pt_qzone_sig=1");
+		return builder.toString();
 	}
 }

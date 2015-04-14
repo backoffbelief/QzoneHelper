@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -339,28 +341,33 @@ public class Utils {
 		try {
 			h1 = hexchar2bin(md5(password));
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	String s2 = md5(h1+salt);
     	String rsaH1 = RsaUtil.rsa_encrypt(h1);
     	
     	String rsaH1Len =Integer.toString(rsaH1.length() / 2, 16) ;
-    	String hexVcode = strToBytes(vcode.toUpperCase());
+//    	String hexVcode = strToBytes(vcode.toUpperCase());
     	return "";
     }
     
-    private static String strToBytes(String str){
-    	
-		String s = "";
-		for (char c : str.toCharArray()) {
-			s += charToHex(c);
-		}
-		return s;
-    }
+//    private static String strToBytes(String str){
+//    	
+//		String s = "";
+//		for (char c : str.toCharArray()) {
+//			s += charToHex(c);
+//		}
+//		return s;
+//    }
     
     public static void main(String[] args) {
-		System.out.println(strToBytes("ab34"));
+//		System.out.println(strToBytes("ab34"));
+//    	String target ="";
+    	try {
+			System.out.println(uin2hex("1345"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
     
     
@@ -433,4 +440,13 @@ public class Utils {
 		return cookieStore;
 	}
     
+	public static String getPt_verifysession_v1(){
+		for(Cookie c:cookieStore.getCookies()){
+			if("ptvfsession".equals(c.getName())&& c.isExpired(new Date())){
+				System.out.println("["+c.getValue()+"]");
+				return c.getValue();
+			}
+		}
+		return "";
+	}
 }
